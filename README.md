@@ -1,4 +1,4 @@
-![CR-3](https://github.com/user-attachments/assets/485b7ff1-c098-40bf-93b4-00058c8729a9)
+![CO-11](https://github.com/user-attachments/assets/f6639a45-7212-49ad-b0b9-b61c6ac94dda)
 
 ## 🥁 CarnaCode 2026 - Desafio 23 - Visitor
 
