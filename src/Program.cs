@@ -69,9 +69,12 @@ namespace VisitorChallenge
             
             // Usando o Visitor para validação
             var validationVisitor = new ValidationVisitor();
-            doc.Accept(validationVisitor);
             Console.WriteLine($"Documento válido (Novo): {validationVisitor.IsValid}");
             
+            // Usando o Visitor para tempo de leitura
+            var readingVisitor = new ReadingTimeVisitor();
+            doc.Accept(readingVisitor);
+            Console.WriteLine($"Tempo de leitura (Novo): {readingVisitor.ReadingTimeMinutes} min");
             
             Console.WriteLine("\n=== Novo: Exportação PDF (amostra) ===");
             var pdfVisitor = new PdfExportVisitor();
