@@ -72,6 +72,13 @@ namespace VisitorChallenge
             doc.Accept(validationVisitor);
             Console.WriteLine($"Documento válido (Novo): {validationVisitor.IsValid}");
             
+            
+            Console.WriteLine("\n=== Novo: Exportação PDF (amostra) ===");
+            var pdfVisitor = new PdfExportVisitor();
+            doc.Accept(pdfVisitor);
+            var pdf = pdfVisitor.GetPdf();
+            Console.WriteLine(pdf.Substring(0, Math.Min(150, pdf.Length)) + "...");
+            
             Console.WriteLine("\n=== Novo: Exportação HTML (amostra) ===");
             var html = htmlVisitor.GetHtml();
             Console.WriteLine(html.Substring(0, Math.Min(200, html.Length)) + "...");
