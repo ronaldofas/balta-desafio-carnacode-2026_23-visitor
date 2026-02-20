@@ -29,11 +29,22 @@ Minha principal fonte de conhecimento durante o desafio foi o eBook gratuito [Fu
 
 ---
 
-# 🚀 Solução da Refatoração (Design Pattern Visitor)
+# 🚀 Minha Implementação da Refatoração (Visitor Pattern)
 
-Como consultor de engenharia, apliquei o padrão **Visitor** para desacoplar as operações da estrutura de dados.
+Para resolver os problemas de design deste projeto, apliquei o padrão **Visitor**. Abaixo, detalho como estruturei a solução e os conceitos que guiaram meu trabalho.
 
-## 📊 Diagrama de Classes
+## 🧠 Entendendo o Padrão Visitor
+
+O **Visitor** é um padrão de projeto comportamental que permite separar algoritmos dos objetos nos quais eles operam. No contexto deste desafio, a estrutura de dados (Parágrafo, Imagem e Tabela) era relativamente estável, mas a necessidade de novas operações era frequente.
+
+### Por que usei este padrão?
+1.  **Open/Closed Principle**: Consegui adicionar novas funcionalidades (como exportação para PDF ou cálculo de tempo de leitura) sem precisar abrir e modificar as classes de elementos originais.
+2.  **Single Responsibility Principle**: Centralizei cada algoritmo em sua própria classe visitante, removendo a "poluição" de métodos não relacionados dentro das classes de domínio.
+3.  **Double Dispatch**: Através do método `Accept(IVisitor)`, implementei um mecanismo onde o elemento decide qual método do visitante deve ser executado com base no seu próprio tipo em tempo de execução. Isso eliminou completamente o uso de `if (element is Paragraph)` ou `switch` baseados em tipo no código do cliente.
+
+## 📊 Arquitetura da Solução
+
+Abaixo, apresento como os componentes interagem. Note como a interface `IVisitor` serve como o elo de ligação que permite aos elementos "aceitarem" novos comportamentos.
 
 ```mermaid
 classDiagram
@@ -52,11 +63,15 @@ classDiagram
 
     class Paragraph {
         +string Text
+        +string FontFamily
+        +int FontSize
         +Accept(IVisitor v)
     }
 
     class Image {
         +string Url
+        +int Width
+        +int Height
         +Accept(IVisitor v)
     }
 
@@ -66,37 +81,59 @@ classDiagram
     }
 
     class HtmlExportVisitor {
+        -StringBuilder _sb
         +GetHtml() string
         +Visit(Paragraph p)
         +Visit(Image i)
         +Visit(Table t)
     }
 
+    class WordCountVisitor {
+        +int TotalWords
+        +Visit(Paragraph p)
+        +Visit(Image i)
+        +Visit(Table t)
+    }
+
     IVisitor <|.. HtmlExportVisitor
+    IVisitor <|.. WordCountVisitor
     DocumentElement <|-- Paragraph
     DocumentElement <|-- Image
     DocumentElement <|-- Table
-    DocumentElement ..> IVisitor : Accept
+    DocumentElement ..> IVisitor : Depende para Double Dispatch
 ```
 
-## 📂 Estrutura de Arquivos
-Todos os arquivos estão localizados na pasta `src/`:
+## �️ Etapas que Executei na Refatoração
 
-- `IVisitor.cs`: Contrato do Visitante.
-- `DocumentElement.cs`: Base para os elementos.
-- `Paragraph.cs`, `Image.cs`, `Table.cs`, `Document.cs`: Modelos de dados.
-- `HtmlExportVisitor.cs`, `PdfExportVisitor.cs`, `WordCountVisitor.cs`, `ValidationVisitor.cs`, `ReadingTimeVisitor.cs`: Implementações de operações.
-- `Program.cs`: Executor que compara a versão legada e a nova.
-- `VisitorChallenge.csproj`: Projeto .NET 10.
+Minha refatoração seguiu um processo iterativo e cuidadoso para garantir que nada quebrasse:
 
-## 🛠️ Etapas da Refatoração
-1. **Configuração**: Criação do novo projeto e executor comparativo.
-2. **Separação**: Extração das classes de dados para arquivos individuais.
-3. **Infraestrutura**: Implementação da interface `IVisitor` e do método `Accept`.
-4. **Implementação**: Criação dos Visitors para cada funcionalidade original.
-5. **Validação**: Execução automatizada para garantir que o comportamento foi preservado.
+### 1. Preparação do Ambiente
+Criei um novo arquivo de projeto (`VisitorChallenge.csproj`) utilizando o **.NET 10.0**. Implementei um novo `Program.cs` que serve como um orquestrador, permitindo executar o código legado e o novo sistema lado a lado para validar a consistência dos resultados.
 
-## Como Executar
+### 2. Definição da Estrutura Base (Contract-First)
+Antes de portar a lógica, defini a interface `IVisitor` com as assinaturas de visita para cada elemento e a classe base abstrata `DocumentElement` com o método crucial `Accept`. Isso estabeleceu o contrato que todos os novos elementos e operações deveriam respeitar.
+
+### 3. Extração e Limpeza das Classes de Domínio
+Movi `Paragraph`, `Image` e `Table` para arquivos individuais. Durante esse processo, removi todos os métodos de exportação, contagem e validação, mantendo apenas as propriedades de dados e o método `Accept`, deixando as classes extremamente "magras" e coesas.
+
+### 4. Implementação Granular das Operações (Visitors)
+Criei uma classe individual para cada operação necessária:
+- `HtmlExportVisitor`: Gerencia toda a geração de tags HTML.
+- `PdfExportVisitor`: Centraliza a representação em formato PDF.
+- `WordCountVisitor`: Soma as palavras de parágrafos e células de tabelas.
+- `ValidationVisitor`: Valida dimensões de imagens e integridade de textos.
+- `ReadingTimeVisitor`: Calcula o tempo estimado com base na densidade de palavras.
+
+### 5. Finalização e Integração Comparativa
+Ajustei o `Program.cs` para realizar uma execução comparativa automática. Ao rodar o projeto, o console agora exibe claramente a saída dos dois sistemas com cabeçalhos formatados, provando que a nova arquitetura produz os mesmos resultados (ou superiores) de forma muito mais sustentável.
+
+## 📂 Estrutura Final de Arquivos na pasta `src/`
+- **Core**: `IVisitor.cs`, `DocumentElement.cs`, `Document.cs`.
+- **Modelos**: `Paragraph.cs`, `Image.cs`, `Table.cs`.
+- **Visitors**: `HtmlExportVisitor.cs`, `PdfExportVisitor.cs`, `WordCountVisitor.cs`, `ValidationVisitor.cs`, `ReadingTimeVisitor.cs`.
+- **Execução**: `Program.cs`, `VisitorChallenge.csproj`, `Challenge.cs` (Legado).
+
+## Como Executar minha solução
 ```bash
 dotnet run --project src/VisitorChallenge.csproj
 ```
