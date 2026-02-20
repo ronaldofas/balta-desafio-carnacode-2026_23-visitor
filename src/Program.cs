@@ -67,6 +67,11 @@ namespace VisitorChallenge
             doc.Accept(wordVisitor);
             Console.WriteLine($"Total de palavras (Novo): {wordVisitor.TotalWords}");
             
+            // Usando o Visitor para validação
+            var validationVisitor = new ValidationVisitor();
+            doc.Accept(validationVisitor);
+            Console.WriteLine($"Documento válido (Novo): {validationVisitor.IsValid}");
+            
             Console.WriteLine("\n=== Novo: Exportação HTML (amostra) ===");
             var html = htmlVisitor.GetHtml();
             Console.WriteLine(html.Substring(0, Math.Min(200, html.Length)) + "...");
