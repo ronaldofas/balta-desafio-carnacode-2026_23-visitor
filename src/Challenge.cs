@@ -292,9 +292,9 @@ namespace DesignPatternChallenge
         // Problema: Cada nova operação requer modificar Document também!
     }
 
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("=== Sistema de Documentos ===\n");
 
