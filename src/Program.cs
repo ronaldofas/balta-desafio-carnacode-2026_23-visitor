@@ -6,17 +6,11 @@ namespace VisitorChallenge
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("=== SISTEMA DE DOCUMENTOS (EXECUTOR) ===");
-            Console.WriteLine("1. Executar Sistema Legado");
-            Console.WriteLine("2. Executar Novo Sistema (Visitor)");
-            Console.WriteLine("3. Executar Ambos para Comparação");
-            Console.Write("\nEscolha uma opção: ");
+            Console.WriteLine("====================================================================");
+            Console.WriteLine("      SISTEMA DE DOCUMENTOS - COMPARAÇÃO: LEGADO VS VISITOR");
+            Console.WriteLine("====================================================================\n");
 
-            var choice = "1"; // Valor padrão para teste inicial
-
-            // Console.ReadLine() não funciona bem em execuções automatizadas sem intervenção
-            // No ambiente real, o usuário escolheria. Para este passo, vamos apenas mostrar que funciona.
-
+            var choice = "3"; // Default para execução comparativa conforme solicitado
             if (args.Length > 0) choice = args[0];
 
             switch (choice)
@@ -29,13 +23,18 @@ namespace VisitorChallenge
                     break;
                 case "3":
                     RunLegacy();
-                    Console.WriteLine("\n" + new string('=', 40) + "\n");
+                    Console.WriteLine("\n" + new string('*', 68));
+                    Console.WriteLine("      MUDANDO PARA O NOVO SISTEMA (DESIGN PATTERN VISITOR)");
+                    Console.WriteLine(new string('*', 68) + "\n");
                     RunNewSystem();
                     break;
                 default:
-                    RunLegacy();
-                    break;
+                    goto case "3";
             }
+            
+            Console.WriteLine("\n====================================================================");
+            Console.WriteLine("                FIM DA COMPARAÇÃO DE SISTEMAS");
+            Console.WriteLine("====================================================================");
         }
 
         static void RunLegacy()
