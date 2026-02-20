@@ -49,7 +49,22 @@ namespace VisitorChallenge
         static void RunNewSystem()
         {
             Console.WriteLine("--- Iniciando Novo Sistema (Visitor) ---\n");
-            Console.WriteLine("Em desenvolvimento...");
+            
+            var doc = new Document("Relatório Anual (Novo)");
+            
+            doc.AddElement(new Paragraph("Este é o relatório anual da empresa (Novo)."));
+            doc.AddElement(new Image("grafico_novo.png", 800, 600));
+            doc.AddElement(new Table(2, 2));
+
+            Console.WriteLine($"Documento Novo: {doc.Title}");
+            
+            // Usando o Visitor para exportação HTML
+            var htmlVisitor = new HtmlExportVisitor();
+            doc.Accept(htmlVisitor);
+            
+            Console.WriteLine("\n=== Novo: Exportação HTML (amostra) ===");
+            var html = htmlVisitor.GetHtml();
+            Console.WriteLine(html.Substring(0, Math.Min(200, html.Length)) + "...");
         }
     }
 }
